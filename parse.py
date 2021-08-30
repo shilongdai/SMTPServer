@@ -132,7 +132,7 @@ def parse_element(scanner):
 
     if not scanner.current.type == CHAR:
         return
-    if scanner.current.spelling.isalpha() or scanner.current.isdigit():
+    if scanner.current.spelling.isalpha() or scanner.current.spelling.isdigit():
         parse_letter_digit_string(scanner)
 
 
