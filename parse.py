@@ -16,8 +16,11 @@ PARAM_ERROR = "501 Syntax error in parameters or arguments"
 OUT_OF_ORDER_ERROR = "503 Bad sequence of commands"
 
 # OK Types
-OK = "250 OK"
-ENTER_DATA = "354 Start mail input; end with <CRLF>.<CRLF>"
+OK = 250
+ENTER_DATA = 354
+
+OK_MSG = "%d OK" % OK
+ENTER_DATA_MSG = "%d Start mail input; end with <CRLF>.<CRLF>" % ENTER_DATA
 
 Token = namedtuple("Token", ["type", "spelling"])
 
@@ -246,6 +249,8 @@ def try_parse(line, expected, funcs):
         raise UnrecognizedCommandException()
     stream = io.StringIO(line)
     tok_scanner = TokenScanner(stream)
+    if tok_scanner.current.spelling[0] not in funcs:
+        raise UnrecognizedCommandException()
     f = funcs[tok_scanner.current.spelling[0]]
     if f:
         try:
@@ -279,7 +284,7 @@ def accept_rcpt_to():
     rcpt_line = read_next_line()
     f, rcpt_addr = try_parse(rcpt_line, [parse_rcpt_to], PARSERS)
     while f == parse_rcpt_to:
-        print(OK)
+        print(OK_MSG)
         rcpts.append(rcpt_addr)
         rcpt_line = read_next_line()
         f, rcpt_addr = try_parse(rcpt_line, [parse_rcpt_to, parse_data_cmd], PARSERS)
@@ -287,17 +292,17 @@ def accept_rcpt_to():
 
 
 def accept_data_entry():
-    print(ENTER_DATA)
+    print(ENTER_DATA_MSG)
     return parse_data_txt()
 
 
 def accept_mail_from():
     mail_from = read_next_line()
     f, from_addr = try_parse(mail_from, [parse_mail_from_cmd], PARSERS)
-    print(OK)
+    print(OK_MSG)
     rcpts = accept_rcpt_to()
     text = accept_data_entry()
-    print(OK)
+    print(OK_MSG)
     return Mail(from_addr, rcpts, text)
 
 
