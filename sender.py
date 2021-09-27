@@ -130,6 +130,10 @@ def handle_data(data, server_in, server_out):
     if not match_code(resp, ENTER_DATA):
         exit_sequence(server_out)
     print(data, file=server_out, end="")
+    if data[-1] == "\n":
+        print(".")
+    else:
+        print("\n.")
     resp = read_server_output(server_in)
     if not match_code(resp, OK):
         exit_sequence(server_out)
