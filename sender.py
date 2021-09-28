@@ -97,8 +97,15 @@ def read_server_output(stream):
 def match_code(resp, code):
     if len(resp) < 3:
         return False
+    resp = resp.strip()
     code_str = resp[:3]
     if not code_str.isdigit():
+        return False
+    if resp == code_str:
+        return False
+    if resp[3] != " " and resp[3] != "\t":
+        return False
+    if len(resp[4:]) == 0 or not resp[4:].isascii():
         return False
     code_int = int(code_str)
     return code == code_int
