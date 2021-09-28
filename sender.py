@@ -140,17 +140,20 @@ def handle_data(data, server_in, server_out):
 
 
 def process_mails(path, server_in, server_out):
-    with open(path, "r") as file:
-        while True:
-            try:
-                next_mail = read_mail(file)
-                if not next_mail:
+    try:
+        with open(path, "r") as file:
+            while True:
+                try:
+                    next_mail = read_mail(file)
+                    if not next_mail:
+                        exit_sequence(server_out)
+                except (ParseException, IOError):
                     exit_sequence(server_out)
-            except (ParseException, IOError):
-                exit_sequence(server_out)
-            handle_mail_from(next_mail.src, server_in, server_out)
-            handle_mail_to(next_mail.targets, server_in, server_out)
-            handle_data(next_mail.text, server_in, server_out)
+                handle_mail_from(next_mail.src, server_in, server_out)
+                handle_mail_to(next_mail.targets, server_in, server_out)
+                handle_data(next_mail.text, server_in, server_out)
+    except IOError:
+        return
 
 
 if __name__ == "__main__":
