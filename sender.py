@@ -137,7 +137,9 @@ def handle_data(data, server_in, server_out):
     if not match_code(resp, ENTER_DATA):
         exit_sequence(server_out)
     print(data, file=server_out, end="")
-    if data[-1] == "\n":
+    if len(data) == 0:
+        print(".")
+    elif data[-1] == "\n":
         print(".")
     else:
         print("\n.")
