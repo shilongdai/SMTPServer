@@ -402,6 +402,7 @@ def process_request(client_conn):
 if __name__ == "__main__":
     if len(sys.argv) != 2:
         print("Please specify only the port number")
+        exit(0)
     try:
         server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     except Exception as e:
